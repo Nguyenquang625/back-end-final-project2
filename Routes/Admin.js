@@ -20,4 +20,28 @@ router.delete('/deleteinspect/:id', (req, res, next)=>{
 router.post('/insertinspect', (req, res, next)=>{
     AdminController.addIns({req,res,next});
 })
+router.get('/getallmanager', (req, res, next)=>{
+    AdminController.getallManager({req,res,next});
+})
+router.get('/getallmembers', (req, res, next)=>{
+    AdminController.getAllMembers({req,res,next});
+})
+router.put('/setadmin', (req, res, next)=>{
+    AdminController.setAdmin({req,res,next});
+})
+router.put('/setowner', (req, res, next)=>{
+    AdminController.setOwner({req,res,next});
+})
+router.put('/setmember', (req, res, next)=>{
+    AdminController.setMember({req,res,next});
+})
+router.put('/banaccount', (req, res, next)=>{
+    AdminController.banAccount({req,res,next});
+})
+router.put('/unbanaccount', (req, res, next)=>{
+    AdminController.unbanAccount({req,res,next});
+})
+router.get('/getinspectionbytitle', (req, res, next)=>{
+    AdminController.getInspectionByTitle({req,res,next});
+})
 module.exports = router;

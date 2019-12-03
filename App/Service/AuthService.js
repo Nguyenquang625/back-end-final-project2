@@ -32,6 +32,12 @@ class AuthService{
                 id : checkpass.id,
                 team_id : checkpass.team_id,
               }, Env.APP_KEY, { expiresIn: "7d" });
+            if(checkpass.level === 0){
+                return{
+                    message: 'this_account_has_been_banned_from_system',
+                    data : null
+                }
+            }
             return{
                 message: 'login_success',
                 data : checkpass,

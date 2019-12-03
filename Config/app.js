@@ -8,7 +8,7 @@ const app = express();
 const cors = require('cors')
 app.use(cors());
 app.use((req, res, next) => {
-  console.log(`request at ${new Date()}`);
+  // console.log(`request at ${new Date()}`);
   next();
 });
 
