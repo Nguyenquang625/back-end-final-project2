@@ -21,7 +21,6 @@ class AuthMiddleware{
 
         const dataToken = jwt.verify(token,Env.APP_KEY);
       
-        console.log('verify thanh cong');
         req.user = dataToken;
         next();
     }

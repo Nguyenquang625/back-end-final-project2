@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon server"
   },
   "author": "",
   "license": "ISC",
@@ -24,6 +25,6 @@
     "mysql": "^2.17.1",
     "objection": "^1.6.9",
     "pm2": "^3.5.1",
-    "socket.io": "^2.2.0"
+    "socket.io": "^2.3.0"
   }
 }
