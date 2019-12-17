@@ -22,5 +22,27 @@ class OwnerController{
         const result = await this.ownerService.getWorkDetailsByInspectionId(inspection_id);
         return res.json(result);
     }
+    async updateProgress({req,res,next}){
+        const {body} = req;
+        const result = await this.ownerService.updateProgress(body);
+        return res.json(result);
+    }
+    async getDataNotify({req,res,next}){
+        const result = await this.ownerService.getDataNotify();
+        return res.json(result);
+    }
+    async sendReport({req,res,next}){
+        const {body} = req;
+        const result = await this.ownerService.sendReport(body);
+        return res.json(result);
+    }
+    async getInspectionByMultiCondtion({req,res,next}){
+        const result = await this.ownerService.getInspectionByMultiCondtion(req.query, req.user);
+        return res.json(result);
+    }
+    async getTeam({req,res,next}){
+        const result = await this.ownerService.getTeam(req.user);
+        return res.json(result);
+    }
 }
 module.exports = new OwnerController();

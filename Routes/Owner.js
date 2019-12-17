@@ -20,4 +20,19 @@ router.post('/addworkdetail', (req, res, next)=>{
 router.post('/getworkwdetailsbyinspectionid', (req, res, next)=>{
     OwnerController.getWorkDetailsByInspectionId({req,res,next});
 })
+router.put('/updateprogress', (req, res, next)=>{
+    OwnerController.updateProgress({req,res,next});
+})
+router.get('/getdatanotify', (req, res, next)=>{
+    OwnerController.getDataNotify({req,res,next});
+})
+router.post('/sendreport', (req, res, next)=>{
+    OwnerController.sendReport({req,res,next});
+})
+router.get('/getinspectionbymulticondtion', (req, res, next)=>{
+    OwnerController.getInspectionByMultiCondtion({req,res,next});
+})
+router.get('/getteam', (req, res, next)=>{
+    OwnerController.getTeam({req,res,next});
+})
 module.exports = router;

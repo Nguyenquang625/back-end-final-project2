@@ -11,6 +11,9 @@ class NoAuthController{
         const result = await this.noAuthService.getStatus();
         return res.json(result);
     }
- 
+    async getOwners({req,res,next}){
+        const result = await this.noAuthService.getOwners();
+        return res.json(result);
+    }
 }
 module.exports = new NoAuthController();

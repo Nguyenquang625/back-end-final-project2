@@ -44,4 +44,19 @@ router.put('/unbanaccount', (req, res, next)=>{
 router.get('/getinspectionbytitle', (req, res, next)=>{
     AdminController.getInspectionByTitle({req,res,next});
 })
+router.post('/adduser', (req, res, next)=>{
+    AdminController.addUser({req,res,next});
+})
+router.get('/getmemberbyname', (req, res, next)=>{
+    AdminController.getMemberByName({req,res,next});
+})
+router.put('/closeinspection', (req, res, next)=>{
+    AdminController.closeInspection({req,res,next});
+})
+router.put('/reopeninspection', (req, res, next)=>{
+    AdminController.reOpenInspection({req,res,next});
+})
+router.put('/updateuserprofile', (req, res, next)=>{
+    AdminController.updateUserProfileByAdmin({req,res,next});
+})
 module.exports = router;

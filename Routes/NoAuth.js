@@ -9,4 +9,7 @@ router.get('/getteams', (req, res, next)=>{
 router.get('/getstatus', (req, res, next)=>{
     NoAuthController.getStatus({req,res,next});
 })
+router.get('/getowners', (req, res, next)=>{
+    NoAuthController.getOwners({req,res,next});
+})
 module.exports = router;

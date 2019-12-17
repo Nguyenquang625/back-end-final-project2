@@ -59,5 +59,26 @@ class AdminController{
         const result = await this.adminService.getInspectionByTitle(req.query);
         return res.json(result);
     }
+    async addUser({req,res,next}){
+        const {body} = req;
+        const result = await this.adminService.addUser(body);
+        return res.json(result);
+    }
+    async getMemberByName({req,res,next}){
+        const result = await this.adminService.getMemberByName(req.query);
+        return res.json(result);
+    }
+    async closeInspection({req,res,next}){
+        const result = await this.adminService.closeInspection(req.body);
+        return res.json(result);
+    }
+    async reOpenInspection({req,res,next}){
+        const result = await this.adminService.reOpenInspection(req.body);
+        return res.json(result);
+    }
+    async updateUserProfileByAdmin({req,res,next}){
+        const result = await this.adminService.updateUserProfileByAdmin(req.body);
+        return res.json(result);
+    }
 }
 module.exports = new AdminController();

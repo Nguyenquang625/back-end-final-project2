@@ -1,17 +1,33 @@
 const InspectionModel= require('../Models/InspectionModel');
 const OwnerInnerJoinInspection = require('../Models/OwnerInnerJoinInspection');
 const UserModel = require('../Models/UserModel');
-const WorkDetailModel = require('../Models/WorkDetailModel')
+const WorkDetailModel = require('../Models/WorkDetailModel');
+const NotificationModel = require('../Models/NotificationModel');
+const ReportModel = require('../Models/ReportModel');
+const OwnerModel = require('../Models/OwnerModel');
+const TeamModel = require('../Models/TeamModel');
+
 class OwnerService{
     constructor(){
         this.inspectionModel = InspectionModel;
         this.ownerInnerJoinInspection = OwnerInnerJoinInspection;
         this.userModel = UserModel;
         this.workDetailModel = WorkDetailModel;
+        this.notificationModel = NotificationModel;
+        this.reportModel = ReportModel;
+        this.ownerModel = OwnerModel;
+        this.teamModel =TeamModel;
     }
     async getMatchIns(id){
         try {
-            const result = await this.ownerInnerJoinInspection.query().eager('insI').where('user_id', id);
+            const getId = await this.ownerModel.query().where('user_id', id).first();
+            if(!getId){
+                return{
+                    message : 'this_is_not_an_owner',
+                    data: null
+                }
+            }
+            const result = await this.inspectionModel.query().where('owner_id', getId.id);
             if(!result.length){
                 return{
                     message : 'no_data',
@@ -85,6 +101,108 @@ class OwnerService{
             }
         } catch (error) {
             console.log(error)
+        }
+    }
+    async updateProgress(body){
+        try {
+            if(!body.id || !body.progress){
+                return{
+                    message : 'data_missing',
+                    data : null
+                }
+            }
+            await this.workDetailModel.query().update({progress: body.progress}).where('id',body.id);
+            const result = await this.workDetailModel.query().where('id',body.id).first();
+            if(!result){
+                return{
+                    message : 'cannot_access_data',
+                    data : null
+                }
+            }
+            return{
+                message : 'save_success',
+                data : result
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    async getDataNotify(){
+        try {
+            const result = await this.notificationModel.query().where('checked', 0);
+            if(!result.length){
+                return{
+                    message : 'no_data',
+                    data : null
+                }
+            }
+            
+            return{
+                message : 'get_success',
+                data : result
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    async sendReport(body){
+        try {
+            console.log(body);
+            if(!body.title||!body.data.length|| !body.inspection_id){
+                return{
+                    message : 'data_required_missing',
+                    data : null
+                }
+            }
+            const dataReport ={
+                title : body.title,
+                data : JSON.stringify(body.data),
+                inspection_id : body.inspection_id
+            }
+            const result = await this.reportModel.query().insert(dataReport);
+            if(!result){
+                return{
+                    message : 'cannot_access_data_server',
+                    data : null
+                }
+            }
+            return{
+                message : 'report_sent',
+                data : result
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    
+    async getInspectionByMultiCondtion(query,user){
+        
+        const getId = await this.ownerModel.query().where('user_id', user.id).first();
+        if(!getId){
+            return{
+                message : 'this_is_not_an_owner',
+                data: null
+            }
+        }
+        const result = await this.inspectionModel.query()
+        .where('owner_id', getId.id)
+        .where('title','like' ,`%${query.title}%`)
+        .where('line_location','like' ,`%${query.line_location}%`)
+        .where('line_condition','like' ,`%${query.line_condition}%`);
+        return{
+            message: 'filter_success',
+            data : result
+        }
+    }
+    async getTeam(user){
+        try {
+            const result = await this.teamModel.query().where('id', user.team_id);
+            return{
+                message: 'filter_success',
+                data : result
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
 }

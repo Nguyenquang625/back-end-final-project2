@@ -44,7 +44,6 @@ class AdminService {
                 || !body.line_condition
                 || !body.line_location
                 || !body.start_date
-                || !body.status
                 || !body.team_id
                 || !body.title
                 ){
@@ -60,7 +59,6 @@ class AdminService {
                 line_condition : body.line_condition,
                 line_location: body.line_location,
                 start_date: body.start_date,
-                status : body.status,
                 team_id : body.team_id,
                 title : body.title, 
                 owner_id : body.owner_id
@@ -353,6 +351,133 @@ class AdminService {
             }
         } catch (error) {
             
+        }
+    }
+    async addUser(body){
+        if(!body.name){
+            return {
+                message : 'please_fill_all_information',
+                data : null
+            }
+        }
+        const checkUser = await this.userModel.query().where('username', body.username).first();
+        if(!!checkUser){
+            return{
+                message: 'username_already_exists',
+                data : null
+            }
+        }
+        const dataInsert ={
+            username: body.username,
+            password: body.password,
+            name: body.name,
+            adress: body.adress,
+            phone_number: body.phone_number,
+            gender: body.gender,
+            mail: body.mail,
+            level: body.level,
+            team_id : body.team_id
+        }
+        const result = await this.userModel.query().insert(dataInsert);
+        if(!result){
+            return{
+                message: 'cannot_interact_with_server',
+                data : null
+            }
+        }
+        return{
+            message: 'new_user_has_been_added',
+            data : result
+        }
+    }
+    async getMemberByName(query){
+        const result = await this.userModel.query()
+        .where('name','like' ,`%${query.name}%`);
+        if(!result.length){
+            return{
+                message: 'cannot_access_data',
+                data : null
+            }
+        }
+        return{
+            message: 'get_member_by_name_success',
+            data : result
+        }
+    }
+    async closeInspection(body){
+        try {
+            if(!body.id){
+                return{
+                    message: 'data_missing',
+                    data: null
+                }
+            }
+            await this.inspectionModel.query().update({status : 3}).where('id', body.id);
+            const result = await this.inspectionModel.query().where('id', body.id).first();
+            if(!result){
+                return{
+                    message: 'cannot_access_data',
+                    data: null
+                }
+            }
+            return{
+                message: 'case_has_been_closed',
+                data: result
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    async reOpenInspection(body){
+        try {
+            if(!body.id){
+                return{
+                    message: 'data_missing',
+                    data: null
+                }
+            }
+            await this.inspectionModel.query().update({status : 2}).where('id', body.id);
+            const result = await this.inspectionModel.query().where('id', body.id).first();
+            if(!result){
+                return{
+                    message: 'cannot_access_data',
+                    data: null
+                }
+            }
+            return{
+                message: 'case_reopended',
+                data: result
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    
+    async updateUserProfileByAdmin(body){
+        try {
+            const data = {
+                name : body.name,
+                username : body.username,
+                adress : body.adress,
+                mail : body.mail,
+                team_id : body.team_id,
+            };
+            await this.userModel.query().update(data).where('id', body.id);
+            const result = await this.userModel.query().where('id', body.id).first();
+            if(!result){
+                return {
+                    message:'update_error',
+                    data : null,
+                }
+            }
+
+            return{
+                message : 'update_success',
+                data : result
+            }
+
+        } catch (error) {
+            console.log(error)
         }
     }
 }

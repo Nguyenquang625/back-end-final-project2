@@ -18,6 +18,15 @@ app.use(express.urlencoded({ extended: false }));
 
 const http = require('http').Server(app);
 
+//socketIo
+const io = require('socket.io')(http, {
+  pingTimeout: 30000,
+  pingInterval: 60000
+});
+const Socket = require('../App/Controllers/WS/SocketController');
+Socket.SocketController(io);
+
+
 http.listen(Env.PORT, () => {
   console.log(`Server run at port: ${Env.PORT}`);
 });
