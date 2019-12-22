@@ -59,4 +59,10 @@ router.put('/reopeninspection', (req, res, next)=>{
 router.put('/updateuserprofile', (req, res, next)=>{
     AdminController.updateUserProfileByAdmin({req,res,next});
 })
+router.post('/addchat', (req, res, next)=>{
+    AdminController.addChat({req,res,next});
+})
+router.get('/getchatlog', (req, res, next)=>{
+    AdminController.getChatLog({req,res,next});
+})
 module.exports = router;

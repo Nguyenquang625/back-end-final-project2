@@ -6,6 +6,7 @@ const NotificationModel = require('../Models/NotificationModel');
 const ReportModel = require('../Models/ReportModel');
 const OwnerModel = require('../Models/OwnerModel');
 const TeamModel = require('../Models/TeamModel');
+const ChatModel = require('../Models/ChatModel');
 
 class OwnerService{
     constructor(){
@@ -17,6 +18,7 @@ class OwnerService{
         this.reportModel = ReportModel;
         this.ownerModel = OwnerModel;
         this.teamModel =TeamModel;
+        this.chatModel = ChatModel;
     }
     async getMatchIns(id){
         try {
@@ -127,9 +129,9 @@ class OwnerService{
             console.log(error)
         }
     }
-    async getDataNotify(){
+    async getDataNotify(user){
         try {
-            const result = await this.notificationModel.query().where('checked', 0);
+            const result = await this.notificationModel.query().where('checked', 0).where('team_id',user.team_id).orderBy('id','desc').limit(5);
             if(!result.length){
                 return{
                     message : 'no_data',
@@ -200,6 +202,115 @@ class OwnerService{
             return{
                 message: 'filter_success',
                 data : result
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    async getInspectionById(query){
+        try {
+            const result = await this.inspectionModel.query().where('id', query.id).first();
+            if(!result){
+                return{
+                    message: 'inspection_no_longer_valid',
+                    data: null
+                }
+            }
+            return{
+                message: 'get_success',
+                data: result
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    async checkedNoti(body){
+        try {
+            await this.notificationModel.query().update({checked : 1}).where('id',body.id);
+            const result = await this.notificationModel.query().where('id',body.id).first();
+            if(!result){
+                return{
+                    message: 'notify_not_found',
+                    data: result
+                }
+            }
+            return{
+                message: 'get_success',
+                data: result
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+    
+    async getAdminSocketID(user){
+        try {
+            const result = await this.userModel.query().where('team_id', user.team_id).where('level', 3).first();
+            if(!result){
+                return{
+                    message: 'this_team_currently_dont_have_admin'
+                }
+            }
+            return{
+                message :'get_sucess',
+                data : result
+            }
+        } catch (error) {
+            
+        }
+    }
+    async addChat(body,user){
+        try {
+            if(!body.chatlog){
+                return{
+                    message :'please_donnot_let_chatbox_empty',
+                    data : null
+                }
+            }
+            const getUser = await this.userModel.query().where('id',user.id).first();
+            if(!getUser){
+                return{
+                    message :'user_no_logner_exist',
+                    data : null
+                }
+            }
+            const dataInsert = {
+                name: getUser.username,
+                chatlog: body.chatlog,
+                user_id: user.id,
+                team_id: user.team_id
+            }
+            const result = await this.chatModel.query().insert(dataInsert);
+            
+            return{
+                message :'insert_success',
+                data : result
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    async getChatLog(user){
+        try {
+            if(!user.id){
+                return{
+                    message :'none_of_user_connect',
+                    data : null
+                }
+            }
+            const getUser = await this.userModel.query().where('id',user.id).first();
+            if(!getUser){
+                return{
+                    message :'user_no_logner_exist',
+                    data : null
+                }
+            }
+            const result = await this.chatModel.query().where('name', getUser.username).where('team_id', getUser.team_id);
+
+            return{
+                message :'get_chatlog_success',
+                data : result,
+                id : user.id
             }
         } catch (error) {
             console.log(error);
