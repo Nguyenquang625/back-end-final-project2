@@ -80,5 +80,13 @@ class AdminController{
         const result = await this.adminService.updateUserProfileByAdmin(req.body);
         return res.json(result);
     }
+    async addChat({req,res,next}){
+        const result = await this.adminService.addChat(req.body,req.user);
+        return res.json(result);
+    }
+    async getChatLog({req,res,next}){
+        const result = await this.adminService.getChatLog(req.query, req.user);
+        return res.json(result);
+    }
 }
 module.exports = new AdminController();

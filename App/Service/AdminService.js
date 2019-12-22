@@ -3,6 +3,7 @@ const UserInnerJoinOwner = require('../Models/UsersInnerJoinOwner');
 const WorkDetailModel = require('../Models/WorkDetailModel');
 const UserModel = require('../Models/UserModel');
 const OwnerModel = require('../Models/OwnerModel');
+const ChatModel = require('../Models/ChatModel');
 
 class AdminService {
     constructor() {
@@ -11,6 +12,7 @@ class AdminService {
         this.workDetailModel = WorkDetailModel;
         this.userModel = UserModel;
         this.ownerModel = OwnerModel;
+        this.chatModel = ChatModel;
     }
     async getInspection(user) {
         try {
@@ -206,6 +208,13 @@ class AdminService {
                 data : null
             }
         }
+        const check = await this.userModel.query().where('level', 3).where('team_id', body.team_id).first();
+        if(!!check){
+            return{
+                message:'this_team_already_got_an_Admin',
+                data:null
+            }
+        }
         const user = await this.userModel.query().where('id',body.id).first();
         const checkOwner = await this.ownerModel.query().where('user_id', body.id).first();
         if(!!checkOwner){
@@ -231,6 +240,13 @@ class AdminService {
             return {
                 message : 'data_not_found',
                 data : null
+            }
+        }
+        const check = await this.userModel.query().where('level', 2).where('team_id', body.team_id).first();
+        if(!!check){
+            return{
+                message: 'this_team_already_have_an_owner',
+                data: null
             }
         }
         const result = await this.userModel.query().update({level: 2}).where('id', body.id);
@@ -276,7 +292,6 @@ class AdminService {
         }
         const user = await this.userModel.query().where('id',body.id).first();
         
-        await this.ownerModel.query().delete().where('user_id', body.id);
         return {
             message : 'set_member_success',
             data : user
@@ -478,6 +493,70 @@ class AdminService {
 
         } catch (error) {
             console.log(error)
+        }
+    }
+    async addChat(body,user){
+        try {
+            if(!body.chatlog){
+                return{
+                    message :'please_donnot_let_chatbox_empty',
+                    data : null
+                }
+            }
+            const getUser = await this.userModel.query().where('id',body.user.id).first();
+            if(!getUser){
+                return{
+                    message :'user_no_logner_exist',
+                    data : null
+                }
+            }
+            const dataInsert = {
+                name: getUser.username,
+                chatlog: body.chatlog,
+                user_id: user.id,
+                team_id: user.team_id
+            }
+            const result = await this.chatModel.query().insert(dataInsert);
+            
+            return{
+                message :'insert_success',
+                data : result
+            }
+        } catch (error) {
+            console.log(error);
+        }
+    }
+    async getChatLog(query,user){
+        try {
+            if(!query.id){
+                return{
+                    message :'none_of_user_connect',
+                    data : null
+                }
+            }
+            const getUser = await this.userModel.query().where('id',query.id).first();
+            if(!getUser){
+                return{
+                    message :'user_no_logner_exist',
+                    data : null
+                }
+            }
+            const result = await this.chatModel.query().where('name', getUser.username).where('team_id', getUser.team_id);
+
+            if(!result.length){
+                return{
+                    message :'chat_log_not_found',
+                    data : null
+                }
+            }
+            return{
+                message :'get_chatlog_success',
+                data : result,
+                id : user.id,
+                name : getUser.name
+            }
+        } catch (error) {
+            console.log(error);
         }
     }
 }

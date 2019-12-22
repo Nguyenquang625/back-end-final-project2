@@ -35,4 +35,19 @@ router.get('/getinspectionbymulticondtion', (req, res, next)=>{
 router.get('/getteam', (req, res, next)=>{
     OwnerController.getTeam({req,res,next});
 })
+router.get('/getinspectionbyid', (req, res, next)=>{
+    OwnerController.getInspectionById({req,res,next});
+})
+router.put('/checkednoti', (req, res, next)=>{
+    OwnerController.checkedNoti({req,res,next});
+})
+router.get('/getadminsocketid', (req, res, next)=>{
+    OwnerController.getAdminSocketID({req,res,next});
+})
+router.post('/addchat', (req, res, next)=>{
+    OwnerController.addChat({req,res,next});
+})
+router.get('/getchatlog', (req, res, next)=>{
+    OwnerController.getChatLog({req,res,next});
+})
 module.exports = router;

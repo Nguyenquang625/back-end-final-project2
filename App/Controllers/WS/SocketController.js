@@ -13,7 +13,21 @@ const SocketController = (io) => {
         socket.on('workNotify', async (body) => {
             const result = await SocketService.insertNotification(body);
             const socketId= await SocketService.getSocketId(body.token);
-            socket.broadcast.to(socketId).emit('notifyNewWork', '')
+            socket.broadcast.to(socketId.socket_id).emit('notifyNewWork', result);
+        });
+
+        socket.on('connectToAdmin', (dataConnect) => {
+            let userData ={
+                user : jwt.verify(dataConnect.token,Env.APP_KEY),
+                socket_id : socket.id
+            }
+            socket.broadcast.to(dataConnect.admin.socket_id).emit('notifyConnect', userData);
+        });
+        socket.on('sendMessageToAdmin', (input) => {
+            socket.broadcast.to(input.admin.socket_id).emit('adminReceiveMessage', input.chatlog);
+        });
+        socket.on('sendMessageToUser', (input) => {
+            socket.broadcast.to(input).emit('userReceiveMessage','You received an Message from admin');
         });
         // socket.on('adduser', (username) => {
         //     socket.username = username;

@@ -28,7 +28,7 @@ class OwnerController{
         return res.json(result);
     }
     async getDataNotify({req,res,next}){
-        const result = await this.ownerService.getDataNotify();
+        const result = await this.ownerService.getDataNotify(req.user);
         return res.json(result);
     }
     async sendReport({req,res,next}){
@@ -42,6 +42,26 @@ class OwnerController{
     }
     async getTeam({req,res,next}){
         const result = await this.ownerService.getTeam(req.user);
+        return res.json(result);
+    }
+    async getInspectionById({req,res,next}){
+        const result = await this.ownerService.getInspectionById(req.query);
+        return res.json(result);
+    }
+    async checkedNoti({req,res,next}){
+        const result = await this.ownerService.checkedNoti(req.body);
+        return res.json(result);
+    }
+    async getAdminSocketID({req,res,next}){
+        const result = await this.ownerService.getAdminSocketID(req.user);
+        return res.json(result);
+    }
+    async addChat({req,res,next}){
+        const result = await this.ownerService.addChat(req.body,req.user);
+        return res.json(result);
+    }
+    async getChatLog({req,res,next}){
+        const result = await this.ownerService.getChatLog(req.user);
         return res.json(result);
     }
 }
